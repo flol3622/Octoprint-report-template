@@ -177,20 +177,31 @@ https://github.com/OllisGit/OctoPrint-PrintJobHistory/wiki/HowToPrintJobReport
 	<!-- Each sheet element should have the class "sheet" -->
 	<!-- "padding-**mm" is optional: you can set 10, 15, 20 or 25 -->
 	{# Each PrintJob on a singel A4 Page #}
-	{% set totalPageCount = (printJobModelAsJson | length) + 1 %}
 
+	<!------------------------------------->
+	{# set following parameters according to your printer and setup: #}
+	{% set consumption = 0.09 %} {# Wh #}
+	{% set energyPrice = 0.7 %} {# €/kWh #}
+	{% set jobCost = 0.5 %} {# how much you ask per hour #}
+	<!------------------------------------->
+
+
+	{% set totalPageCount = (printJobModelAsJson | length) + 1 %}
 
 	<section class="sheet padding-10mm">
 		<article>
-			<h1>PrintJob Report - Flupke - Prusa Mini</h1>
-			{% set mySum = 0.0 %}
+			<h1>PrintJob Report</h1>
+			{% set mySum = [] %}
 			{% for aPrint in printJobModelAsJson %}
-			{% set newCost = (0.7 * 0.09 * aPrint["duration"] / 3600) + (0.5 * aPrint["duration"] / 3600) %}
-			<div>{{ "%.2f €"|format(newCost) }} {{ aPrint["fileName"] }}</div>
-			{% set mySum = mySum + newCost %}
+			{% set mcost = aPrint["filamentModels"]["total"]["usedCost"] | float %}
+			{% set pcost = energyPrice * consumption * aPrint["duration"] / 3600 %}
+			{% set mecost = jobCost * aPrint["duration"] / 3600 %}
+			{% set tcost = pcost + mecost + mcost %}
+			<div>{{ "%.2f €"|format(tcost) }} {{ aPrint["fileName"] }}</div>
+			{{ mySum.append( tcost ) or "" }}
 			{% endfor %}
 			<hr />
-			<div><strong>{{ "%.2f €"|format(mySum) }} total </strong></div>
+			<div><strong>{{ "%.2f €"|format( mySum|sum ) }} Total </strong></div>
 		</article>
 	</section>
 
@@ -220,11 +231,11 @@ https://github.com/OllisGit/OctoPrint-PrintJobHistory/wiki/HowToPrintJobReport
 			<hr />
 
 			<h4>Costs</h4>
-			<div>Electricity cost: 0.7 €/kWh | Maintenance cost: 0.5 €/h | Consumption: 0.09 kW </div>
+			<div>Electricity cost: {{ energyPrice }} €/kWh | Maintenance cost: {{ jobCost }} €/h | Consumption: {{ consumption }} kW </div>
 			<br />
 			{% set mcost = printJobModelAsJson["filamentModels"]["total"]["usedCost"] | float %}
-			{% set pcost = 0.7 * 0.09 * printJobModelAsJson["duration"] / 3600 %}
-			{% set mecost = 0.5 * printJobModelAsJson["duration"] / 3600 %}
+			{% set pcost = energyPrice * consumption * printJobModelAsJson["duration"] / 3600 %}
+			{% set mecost = jobCost * printJobModelAsJson["duration"] / 3600 %}
 			{% set tcost = pcost + mecost + mcost %}
 
 			<div>Material cost: {{ mcost }} €</div>
