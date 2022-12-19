@@ -215,18 +215,22 @@ https://github.com/OllisGit/OctoPrint-PrintJobHistory/wiki/HowToPrintJobReport
 			<h4>Material</h4>
 			<div>Spoolname: {{ printJobModelAsJson["filamentModels"]["tool0"]["spoolName"] }}</div>
 			<div>Material: {{ printJobModelAsJson["filamentModels"]["tool0"]["material"] }}</div>
-			<div>Used length: {{ printJobModelAsJson["filamentModels"]["total"]["usedLengthFormatted"] }}</div>
-			<div>Used weight: {{ printJobModelAsJson["filamentModels"]["total"]["usedWeight"] }}</div>
+			<div>Used length: {{ printJobModelAsJson["filamentModels"]["total"]["usedLengthFormatted"] }} m</div>
+			<div>Used weight: {{ printJobModelAsJson["filamentModels"]["total"]["usedWeight"] }} g</div>
 			<hr />
 
 			<h4>Costs</h4>
 			<div>Electricity cost: 0.7 €/kWh | Maintenance cost: 0.5 €/h | Consumption: 0.09 kW </div>
 			<br />
-			<div>Material cost: {{ printJobModelAsJson["filamentModels"]["total"]["usedCost"] }} €</div>
-			<div>Print cost: {{ "%.2f €"|format(0.7 * 0.09 * printJobModelAsJson["duration"] / 3600) }} </div>
-			<div>Printer cost: {{ "%.2f €"|format(0.5 * printJobModelAsJson["duration"] / 3600) }} </div>
-			<div><strong> Total cost: {{ "%.2f €"|format((0.7 * 0.09 * printJobModelAsJson["duration"] / 3600) + (0.5 *
-					printJobModelAsJson["duration"] / 3600)) }} </strong></div>
+			{% set mcost = printJobModelAsJson["filamentModels"]["total"]["usedCost"] | float %}
+			{% set pcost = 0.7 * 0.09 * printJobModelAsJson["duration"] / 3600 %}
+			{% set mecost = 0.5 * printJobModelAsJson["duration"] / 3600 %}
+			{% set tcost = pcost + mecost + mcost %}
+
+			<div>Material cost: {{ mcost }} €</div>
+			<div>Print cost: {{ "%.2f €"|format(pcost) }} </div>
+			<div>Printer cost: {{ "%.2f €"|format(mecost) }} </div>
+			<div><strong> Total cost: {{ "%.2f €"|format(tcost) }} </strong></div>
 			<hr />
 
 			<br />
