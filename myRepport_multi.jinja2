@@ -1,0 +1,249 @@
+{#
+THIS IS THE DEFAULT MULTI PRINTJOB REPORT
+You can change the content as decribed in the Wiki:
+https://github.com/OllisGit/OctoPrint-PrintJobHistory/wiki/HowToPrintJobReport
+#}
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title></title>
+	<style type="text/css">
+		// copied from https://github.com/cognitom/paper-css
+		@page {
+			margin: 0
+		}
+
+		body {
+			margin: 0;
+			font: 12pt "Tahoma";
+		}
+
+		.sheet {
+			margin: 0;
+			overflow: hidden;
+			position: relative;
+			box-sizing: border-box;
+			page-break-after: always;
+		}
+
+		/** Paper sizes **/
+		body.A3 .sheet {
+			width: 297mm;
+			height: 419mm
+		}
+
+		body.A3.landscape .sheet {
+			width: 420mm;
+			height: 296mm
+		}
+
+		body.A4 .sheet {
+			width: 210mm;
+			height: 296mm
+		}
+
+		body.A4.landscape .sheet {
+			width: 297mm;
+			height: 209mm
+		}
+
+		body.A5 .sheet {
+			width: 148mm;
+			height: 209mm
+		}
+
+		body.A5.landscape .sheet {
+			width: 210mm;
+			height: 147mm
+		}
+
+		body.letter .sheet {
+			width: 216mm;
+			height: 279mm
+		}
+
+		body.letter.landscape .sheet {
+			width: 280mm;
+			height: 215mm
+		}
+
+		body.legal .sheet {
+			width: 216mm;
+			height: 356mm
+		}
+
+		body.legal.landscape .sheet {
+			width: 357mm;
+			height: 215mm
+		}
+
+		/** Padding area **/
+		.sheet.padding-10mm {
+			padding: 10mm
+		}
+
+		.sheet.padding-15mm {
+			padding: 15mm
+		}
+
+		.sheet.padding-20mm {
+			padding: 20mm
+		}
+
+		.sheet.padding-25mm {
+			padding: 25mm
+		}
+
+		/** For screen preview **/
+		@media screen {
+			body {
+				background: #e0e0e0
+			}
+
+			.sheet {
+				background: white;
+				box-shadow: 0 .5mm 2mm rgba(0, 0, 0, .3);
+				margin: 5mm auto;
+			}
+		}
+
+		/** Fix for Chrome issue #273306 **/
+		@media print {
+			body.A3.landscape {
+				width: 420mm
+			}
+
+			body.A3,
+			body.A4.landscape {
+				width: 297mm
+			}
+
+			body.A4,
+			body.A5.landscape {
+				width: 210mm
+			}
+
+			body.A5 {
+				width: 148mm
+			}
+
+			body.letter,
+			body.legal {
+				width: 216mm
+			}
+
+			body.letter.landscape {
+				width: 280mm
+			}
+
+			body.legal.landscape {
+				width: 357mm
+			}
+		}
+
+		@page {
+			size: A4
+		}
+
+
+		.img-polaroid {
+			padding: 4px;
+			background-color: #fff;
+			border: 1px solid #ccc;
+			border: 1px solid rgba(0, 0, 0, 0.2);
+			-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+			-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		}
+
+		img {
+			width: auto \9;
+			height: auto;
+			max-width: 50%;
+			vertical-align: middle;
+			border: 0;
+			-ms-interpolation-mode: bicubic;
+		}
+	</style>
+
+</head>
+<!-- Set "A5", "A4" or "A3" for class name -->
+<!-- Set also "landscape" if you need -->
+<!-- HINT: DEBUGGING just remmove class, then you can see everyting instead of only one page -->
+
+<body class="A4">
+
+	<!-- Each sheet element should have the class "sheet" -->
+	<!-- "padding-**mm" is optional: you can set 10, 15, 20 or 25 -->
+	{# Each PrintJob on a singel A4 Page #}
+	{% set totalPageCount = (printJobModelAsJson | length) + 1 %}
+
+
+	<section class="sheet padding-10mm">
+		<article>
+			<h1>PrintJob Report - Flupke - Prusa Mini</h1>
+			{% set mySum = 0.0 %}
+			{% for aPrint in printJobModelAsJson %}
+			{% set newCost = (0.7 * 0.09 * aPrint["duration"] / 3600) + (0.5 * aPrint["duration"] / 3600) %}
+			<div>{{ "%.2f €"|format(newCost) }} {{ aPrint["fileName"] }}</div>
+			{% set mySum = mySum + newCost %}
+			{% endfor %}
+			<hr />
+			<div><strong>{{ "%.2f €"|format(mySum) }} total </strong></div>
+		</article>
+	</section>
+
+	{% for printJobModelAsJson in printJobModelAsJson %}
+	<section class="sheet padding-10mm">
+
+		<!-- Write HTML just like a web page -->
+		<article>
+
+			<h3>{{ printJobModelAsJson["fileName"] }}</h3>
+			<hr />
+			<h4>General</h4>
+			<div>Printed by: {{ printJobModelAsJson["userName"] }}</div>
+			<div>Starttime: {{ printJobModelAsJson["printStartDateTimeFormatted"] }}</div>
+			<div>EndTime: {{ printJobModelAsJson["printEndDateTimeFormatted"] }}</div>
+			<div>Duration: {{ printJobModelAsJson["durationFormatted"] }}</div>
+			<br />
+			<div>Result: {{ printJobModelAsJson["printStatusResult"] }}</div>
+			<div>Notes: {{ printJobModelAsJson["noteText"] }}</div>
+			<hr />
+
+			<h4>Material</h4>
+			<div>Spoolname: {{ printJobModelAsJson["filamentModels"]["tool0"]["spoolName"] }}</div>
+			<div>Material: {{ printJobModelAsJson["filamentModels"]["tool0"]["material"] }}</div>
+			<div>Used length: {{ printJobModelAsJson["filamentModels"]["total"]["usedLengthFormatted"] }}</div>
+			<div>Used weight: {{ printJobModelAsJson["filamentModels"]["total"]["usedWeight"] }}</div>
+			<hr />
+
+			<h4>Costs</h4>
+			<div>Electricity cost: 0.7 €/kWh | Maintenance cost: 0.5 €/h | Consumption: 0.09 kW </div>
+			<br />
+			<div>Material cost: {{ printJobModelAsJson["filamentModels"]["total"]["usedCost"] }} €</div>
+			<div>Print cost: {{ "%.2f €"|format(0.7 * 0.09 * printJobModelAsJson["duration"] / 3600) }} </div>
+			<div>Printer cost: {{ "%.2f €"|format(0.5 * printJobModelAsJson["duration"] / 3600) }} </div>
+			<div><strong> Total cost: {{ "%.2f €"|format((0.7 * 0.09 * printJobModelAsJson["duration"] / 3600) + (0.5 *
+					printJobModelAsJson["duration"] / 3600)) }} </strong></div>
+			<hr />
+
+			<br />
+			<img class="img-polaroid"
+				src="{{ url_for('plugin.PrintJobHistory.get_snapshot',snapshotFilename=printJobModelAsJson['snapshotFilename'] ) }}">
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+			<div>Report created at {{ reportCreationTime.strftime('%d.%m.%Y %H:%M') }}. Page {{loop.index}} of {{
+				totalPageCount }}</div>
+
+		</article>
+	</section>
+	{% endfor %}
+
+	<script type="text/javascript">
+		{ #window.print();# }
+	</script>
+</body>
+
+</html>
