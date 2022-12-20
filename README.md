@@ -26,9 +26,9 @@ This template is ideal for people who want a quick receipt when printing for som
 
 ## Screenshots
 ### Front page report:
-![Front page](.\screenshots\Front-page.png)
+![Front page](screenshots\Front-page.png)
 ### Job page report:
-![Job page](.\screenshots\Job-example.png)
+![Job page](screenshots\Job-example.png)
 
 
 ## Support and Feedback
