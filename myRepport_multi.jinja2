@@ -202,6 +202,9 @@ https://github.com/OllisGit/OctoPrint-PrintJobHistory/wiki/HowToPrintJobReport
 			{% endfor %}
 			<hr />
 			<div><strong>{{ "%.2f €"|format( mySum|sum ) }} Total </strong></div>
+			<hr/>
+			<div>Report created at {{ reportCreationTime.strftime('%d.%m.%Y %H:%M') }}. Page 1 of {{
+				totalPageCount }}</div>
 		</article>
 	</section>
 
@@ -231,7 +234,7 @@ https://github.com/OllisGit/OctoPrint-PrintJobHistory/wiki/HowToPrintJobReport
 			<hr />
 
 			<h4>Costs</h4>
-			<div>Electricity cost: {{ energyPrice }} €/kWh | Maintenance cost: {{ jobCost }} €/h | Consumption: {{ consumption }} kW </div>
+			<div>Electricity price: {{ energyPrice }} €/kWh | Maintenance price: {{ jobCost }} €/h | Consumption: {{ consumption }} kW </div>
 			<br />
 			{% set mcost = printJobModelAsJson["filamentModels"]["total"]["usedCost"] | float %}
 			{% set pcost = energyPrice * consumption * printJobModelAsJson["duration"] / 3600 %}
@@ -239,8 +242,8 @@ https://github.com/OllisGit/OctoPrint-PrintJobHistory/wiki/HowToPrintJobReport
 			{% set tcost = pcost + mecost + mcost %}
 
 			<div>Material cost: {{ mcost }} €</div>
-			<div>Print cost: {{ "%.2f €"|format(pcost) }} </div>
-			<div>Printer cost: {{ "%.2f €"|format(mecost) }} </div>
+			<div>Electricity cost: {{ "%.2f €"|format(pcost) }} </div>
+			<div>Maintenance cost: {{ "%.2f €"|format(mecost) }} </div>
 			<div><strong> Total cost: {{ "%.2f €"|format(tcost) }} </strong></div>
 			<hr />
 
@@ -249,7 +252,7 @@ https://github.com/OllisGit/OctoPrint-PrintJobHistory/wiki/HowToPrintJobReport
 				src="{{ url_for('plugin.PrintJobHistory.get_snapshot',snapshotFilename=printJobModelAsJson['snapshotFilename'] ) }}">
 			<div>&nbsp;</div>
 			<div>&nbsp;</div>
-			<div>Report created at {{ reportCreationTime.strftime('%d.%m.%Y %H:%M') }}. Page {{loop.index}} of {{
+			<div>Report created at {{ reportCreationTime.strftime('%d.%m.%Y %H:%M') }}. Page {{loop.index + 1}} of {{
 				totalPageCount }}</div>
 
 		</article>
