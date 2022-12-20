@@ -24,6 +24,13 @@ This template is ideal for people who want a quick receipt when printing for som
 
 2. Install the PrintJobHistory plugin for OctoPrint and upload the Jinja template in the report tab of the PrintJobHistory plugin settings. 
 
+## Screenshots
+### Front page report:
+![Front page](.\screenshots\Front-page.png)
+### Job page report:
+![Job page](.\screenshots\Job-example.png)
+
+
 ## Support and Feedback
 We hope you find this template useful, and please don't hesitate to reach out if you have any questions or suggestions for improvement. You can open an issue on this repository.
 
