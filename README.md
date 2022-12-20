@@ -35,3 +35,8 @@ This template is ideal for people who want a quick receipt when printing for som
 We hope you find this template useful, and please don't hesitate to reach out if you have any questions or suggestions for improvement. You can open an issue on this repository.
 
 Happy printing!
+___
+
+> from [PrintJobHistory plugin](https://github.com/OllisGit/OctoPrint-PrintJobHistory/edit/master/README.md)
+>
+> template file based on [template file](https://github.com/OllisGit/OctoPrint-PrintJobHistory/blob/eb49a9547b7b885b9d3f46f9df37b9b582e08739/octoprint_PrintJobHistory/templates/PrintJobHistory_defaultMultiPrintJobReport.jinja2)
